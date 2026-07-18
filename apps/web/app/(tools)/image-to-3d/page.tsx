@@ -172,7 +172,7 @@ export default function ImageTo3DPage() {
               <primitive object={stage.object} />
             </Model3DViewer>
           ) : (
-            <div className="w-full h-[420px] rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50 flex flex-col items-center justify-center gap-3 relative overflow-hidden">
+            <div className="w-full h-[420px] rounded-xl border-2 border-dashed border-white/15 bg-white/[0.03] flex flex-col items-center justify-center gap-3 relative overflow-hidden">
               {preview && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -184,8 +184,8 @@ export default function ImageTo3DPage() {
               <div className="relative z-10 flex flex-col items-center gap-3 text-center px-4">
                 {busy ? (
                   <>
-                    <div className="w-10 h-10 border-4 border-zinc-700 border-t-orange-500 rounded-full animate-spin" />
-                    <p className="text-zinc-300">
+                    <div className="w-10 h-10 border-4 border-white/15 border-t-clay rounded-full animate-spin" />
+                    <p className="text-white/80">
                       {stage.name === "uploading"
                         ? "Enviando imagem..."
                         : `Gerando modelo 3D... ${
@@ -195,7 +195,7 @@ export default function ImageTo3DPage() {
                               : ""
                           }`}
                     </p>
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-sm text-white/40">
                       Isso costuma levar de 1 a 3 minutos. Pode deixar a página
                       aberta.
                     </p>
@@ -204,11 +204,11 @@ export default function ImageTo3DPage() {
                   <>
                     <button
                       onClick={() => inputRef.current?.click()}
-                      className="px-5 py-3 rounded-lg bg-orange-600 hover:bg-orange-500 font-medium"
+                      className="px-5 py-3 rounded-lg bg-clay hover:bg-clay-soft font-medium"
                     >
                       Escolher imagem
                     </button>
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-sm text-white/40">
                       JPG, PNG ou WebP até 10MB. Objetos bem iluminados e com
                       fundo limpo geram os melhores modelos.
                     </p>
@@ -216,7 +216,7 @@ export default function ImageTo3DPage() {
                       <p className="text-sm text-red-400">{stage.message}</p>
                     )}
                     {stage.name === "done" && !stage.object && (
-                      <p className="text-sm text-zinc-400">
+                      <p className="text-sm text-white/55">
                         Modelo gerado! O preview 3D não carregou, mas o download
                         está disponível ao lado.
                       </p>
@@ -236,16 +236,16 @@ export default function ImageTo3DPage() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
-            <span className="text-sm text-zinc-300">Qualidade</span>
+          <div className="flex flex-col gap-3 p-4 rounded-xl bg-white/[0.04] border border-white/10">
+            <span className="text-sm text-white/80">Qualidade</span>
             <div className="flex gap-2">
               <button
                 onClick={() => setQuality("rapid")}
                 disabled={busy}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
                   quality === "rapid"
-                    ? "bg-orange-600/20 border-orange-500 text-orange-300"
-                    : "bg-zinc-800 border-zinc-700 text-zinc-400"
+                    ? "bg-clay/15 border-clay text-clay"
+                    : "bg-white/[0.06] border-white/15 text-white/55"
                 }`}
               >
                 Rápida
@@ -255,8 +255,8 @@ export default function ImageTo3DPage() {
                 disabled={busy}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
                   quality === "pro"
-                    ? "bg-orange-600/20 border-orange-500 text-orange-300"
-                    : "bg-zinc-800 border-zinc-700 text-zinc-400"
+                    ? "bg-clay/15 border-clay text-clay"
+                    : "bg-white/[0.06] border-white/15 text-white/55"
                 }`}
               >
                 Pro (mais detalhes)
@@ -265,11 +265,11 @@ export default function ImageTo3DPage() {
           </div>
 
           {stage.name === "done" && (
-            <div className="flex flex-col gap-3 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+            <div className="flex flex-col gap-3 p-4 rounded-xl bg-white/[0.04] border border-white/10">
               <a
                 href={stage.modelUrl}
                 download="modelo-trivertido"
-                className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600 text-sm font-medium text-center"
+                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-sm font-medium text-center"
               >
                 Baixar modelo 3D
               </a>
@@ -278,20 +278,20 @@ export default function ImageTo3DPage() {
                   onClick={() =>
                     setOrderState((s) => ({ ...s, open: !s.open }))
                   }
-                  className="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 text-sm font-medium"
+                  className="px-4 py-2 rounded-lg bg-clay hover:bg-clay-soft text-sm font-medium"
                 >
                   Pedir impressão
                 </button>
               )}
               {orderState.open && (
-                <div className="flex flex-col gap-2 pt-2 border-t border-zinc-800">
+                <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
                   <input
                     value={orderState.name}
                     onChange={(e) =>
                       setOrderState((s) => ({ ...s, name: e.target.value }))
                     }
                     placeholder="Seu nome"
-                    className="px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm"
+                    className="px-3 py-2 rounded-lg bg-white/[0.06] border border-white/15 text-sm"
                   />
                   <input
                     value={orderState.phone}
@@ -299,35 +299,35 @@ export default function ImageTo3DPage() {
                       setOrderState((s) => ({ ...s, phone: e.target.value }))
                     }
                     placeholder="WhatsApp (com DDD)"
-                    className="px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm"
+                    className="px-3 py-2 rounded-lg bg-white/[0.06] border border-white/15 text-sm"
                   />
                   <button
                     onClick={sendOrder}
                     disabled={
                       orderState.sending || !orderState.name || !orderState.phone
                     }
-                    className="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 disabled:opacity-40 text-sm font-medium"
+                    className="px-4 py-2 rounded-lg bg-clay hover:bg-clay-soft disabled:opacity-40 text-sm font-medium"
                   >
                     {orderState.sending ? "Enviando..." : "Confirmar pedido"}
                   </button>
                 </div>
               )}
               {orderState.message && (
-                <p className="text-sm text-zinc-300">{orderState.message}</p>
+                <p className="text-sm text-white/80">{orderState.message}</p>
               )}
               <button
                 onClick={() => {
                   setStage({ name: "idle" });
                   setPreview(null);
                 }}
-                className="text-sm text-orange-400 hover:underline"
+                className="text-sm text-clay hover:underline"
               >
                 Gerar outro modelo
               </button>
             </div>
           )}
 
-          <p className="text-xs text-zinc-500 px-1">
+          <p className="text-xs text-white/40 px-1">
             Esta ferramenta usa IA generativa — cada geração consome créditos.
             O modelo Rápido é ótimo pra maioria dos casos; use o Pro pra peças
             com muitos detalhes finos.

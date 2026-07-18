@@ -40,7 +40,7 @@ export default function DeskOrganizerPage() {
   const [params, setParams] = useState<DeskOrganizerParams>(
     defaultDeskOrganizerParams
   );
-  const [color, setColor] = useState("#e8863a");
+  const [color, setColor] = useState("#c96a3b");
 
   const geometry = useMemo(
     () => generateDeskOrganizerGeometry(params),
@@ -56,12 +56,12 @@ export default function DeskOrganizerPage() {
         <Model3DViewer geometry={geometry} color={color} />
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+          <div className="flex flex-col gap-4 p-4 rounded-xl bg-white/[0.04] border border-white/10">
             {SLIDERS.map(({ key, label, min, max, step }) => (
               <label key={key} className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between text-zinc-300">
+                <span className="flex justify-between text-white/80">
                   {label}
-                  <span className="text-zinc-500">{params[key]}</span>
+                  <span className="text-white/40">{params[key]}</span>
                 </span>
                 <input
                   type="range"
@@ -75,11 +75,11 @@ export default function DeskOrganizerPage() {
                       [key]: Number(e.target.value),
                     }))
                   }
-                  className="accent-orange-500"
+                  className="accent-clay"
                 />
               </label>
             ))}
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-white/40">
               {params.cols * params.rows} compartimento
               {params.cols * params.rows > 1 ? "s" : ""}
             </p>

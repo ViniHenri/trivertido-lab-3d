@@ -151,14 +151,14 @@ export default function ExportPanel({
   ]);
 
   return (
-    <div className="flex flex-col gap-3 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+    <div className="flex flex-col gap-3 p-4 rounded-xl bg-white/[0.04] border border-white/10">
       <div className="flex flex-wrap gap-3">
         {exportFiles.map((f) => (
           <button
             key={f.format}
             onClick={() => download(f)}
             disabled={!hasContent}
-            className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600 disabled:opacity-40 text-sm font-medium"
+            className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 disabled:opacity-40 text-sm font-medium"
           >
             {f.label}
           </button>
@@ -166,30 +166,30 @@ export default function ExportPanel({
         <button
           onClick={() => setShowOrderForm((v) => !v)}
           disabled={!hasContent}
-          className="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 disabled:opacity-40 text-sm font-medium"
+          className="px-4 py-2 rounded-lg bg-clay hover:bg-clay-soft disabled:opacity-40 text-sm font-medium"
         >
           Pedir impressão
         </button>
       </div>
 
       {showOrderForm && (
-        <div className="flex flex-col gap-2 pt-2 border-t border-zinc-800">
+        <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
           <input
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
             placeholder="Seu nome"
-            className="px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm"
+            className="px-3 py-2 rounded-lg bg-white/[0.06] border border-white/15 text-sm"
           />
           <input
             value={customerPhone}
             onChange={(e) => setCustomerPhone(e.target.value)}
             placeholder="WhatsApp (com DDD)"
-            className="px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm"
+            className="px-3 py-2 rounded-lg bg-white/[0.06] border border-white/15 text-sm"
           />
 
           {colors.length > 0 && (
             <div className="flex flex-col gap-1.5">
-              <span className="text-sm text-zinc-300">Cor do filamento</span>
+              <span className="text-sm text-white/80">Cor do filamento</span>
               <div className="flex flex-wrap gap-2">
                 {colors.map((c) => (
                   <button
@@ -201,15 +201,15 @@ export default function ExportPanel({
                     title={`${c.cor_nome} (${c.tipo})`}
                     className={`w-8 h-8 rounded-full border-2 transition-transform ${
                       colorId === c.id
-                        ? "border-orange-400 scale-110"
-                        : "border-zinc-600"
+                        ? "border-clay/70 scale-110"
+                        : "border-white/20"
                     }`}
                     style={{ backgroundColor: c.cor }}
                   />
                 ))}
               </div>
               {colorId && (
-                <span className="text-xs text-zinc-500">
+                <span className="text-xs text-white/40">
                   {colors.find((c) => c.id === colorId)?.cor_nome} (
                   {colors.find((c) => c.id === colorId)?.tipo})
                 </span>
@@ -220,14 +220,14 @@ export default function ExportPanel({
           <button
             onClick={sendOrder}
             disabled={sending || !customerName || !customerPhone}
-            className="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 disabled:opacity-40 text-sm font-medium"
+            className="px-4 py-2 rounded-lg bg-clay hover:bg-clay-soft disabled:opacity-40 text-sm font-medium"
           >
             {sending ? "Enviando..." : "Confirmar pedido"}
           </button>
         </div>
       )}
 
-      {message && <p className="text-sm text-zinc-300">{message}</p>}
+      {message && <p className="text-sm text-white/80">{message}</p>}
     </div>
   );
 }

@@ -72,25 +72,25 @@ export default function SignPage() {
         <Model3DViewer geometry={geometry} />
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+          <div className="flex flex-col gap-4 p-4 rounded-xl bg-white/[0.04] border border-white/10">
             <label className="flex flex-col gap-1 text-sm">
-              <span className="text-zinc-300">Texto</span>
+              <span className="text-white/80">Texto</span>
               <input
                 value={params.text}
                 onChange={(e) => set("text", e.target.value)}
                 maxLength={40}
-                className="px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700"
+                className="px-3 py-2 rounded-lg bg-white/[0.06] border border-white/15"
                 placeholder="Seu texto aqui"
               />
             </label>
 
             <div className="grid grid-cols-2 gap-3">
               <label className="flex flex-col gap-1 text-sm">
-                <span className="text-zinc-300">Fonte</span>
+                <span className="text-white/80">Fonte</span>
                 <select
                   value={fontId}
                   onChange={(e) => setFontId(e.target.value)}
-                  className="px-2 py-2 rounded-lg bg-zinc-800 border border-zinc-700"
+                  className="px-2 py-2 rounded-lg bg-white/[0.06] border border-white/15"
                 >
                   {FONTS.map((f) => (
                     <option key={f.id} value={f.id}>
@@ -100,11 +100,11 @@ export default function SignPage() {
                 </select>
               </label>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="text-zinc-300">Forma</span>
+                <span className="text-white/80">Forma</span>
                 <select
                   value={params.shape}
                   onChange={(e) => set("shape", e.target.value as SignShape)}
-                  className="px-2 py-2 rounded-lg bg-zinc-800 border border-zinc-700"
+                  className="px-2 py-2 rounded-lg bg-white/[0.06] border border-white/15"
                 >
                   {SHAPES.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -125,9 +125,9 @@ export default function SignPage() {
               ] as Array<[keyof SignParams, string, number, number, number]>
             ).map(([key, label, min, max, step]) => (
               <label key={key} className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between text-zinc-300">
+                <span className="flex justify-between text-white/80">
                   {label}
-                  <span className="text-zinc-500">{params[key] as number}</span>
+                  <span className="text-white/40">{params[key] as number}</span>
                 </span>
                 <input
                   type="range"
@@ -136,7 +136,7 @@ export default function SignPage() {
                   step={step}
                   value={params[key] as number}
                   onChange={(e) => set(key, Number(e.target.value) as never)}
-                  className="accent-orange-500"
+                  className="accent-clay"
                 />
               </label>
             ))}
@@ -146,8 +146,8 @@ export default function SignPage() {
                 onClick={() => set("recessed", false)}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
                   !params.recessed
-                    ? "bg-orange-600/20 border-orange-500 text-orange-300"
-                    : "bg-zinc-800 border-zinc-700 text-zinc-400"
+                    ? "bg-clay/15 border-clay text-clay"
+                    : "bg-white/[0.06] border-white/15 text-white/55"
                 }`}
               >
                 Texto elevado
@@ -156,28 +156,28 @@ export default function SignPage() {
                 onClick={() => set("recessed", true)}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
                   params.recessed
-                    ? "bg-orange-600/20 border-orange-500 text-orange-300"
-                    : "bg-zinc-800 border-zinc-700 text-zinc-400"
+                    ? "bg-clay/15 border-clay text-clay"
+                    : "bg-white/[0.06] border-white/15 text-white/55"
                 }`}
               >
                 Texto gravado
               </button>
             </div>
 
-            <label className="flex items-center justify-between text-sm text-zinc-300">
+            <label className="flex items-center justify-between text-sm text-white/80">
               Furos de fixação
               <input
                 type="checkbox"
                 checked={params.holes}
                 onChange={(e) => set("holes", e.target.checked)}
-                className="accent-orange-500 w-4 h-4"
+                className="accent-clay w-4 h-4"
               />
             </label>
             {params.holes && (
               <label className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between text-zinc-300">
+                <span className="flex justify-between text-white/80">
                   Diâmetro dos furos (mm)
-                  <span className="text-zinc-500">{params.holeDiameter}</span>
+                  <span className="text-white/40">{params.holeDiameter}</span>
                 </span>
                 <input
                   type="range"
@@ -186,7 +186,7 @@ export default function SignPage() {
                   step={0.5}
                   value={params.holeDiameter}
                   onChange={(e) => set("holeDiameter", Number(e.target.value))}
-                  className="accent-orange-500"
+                  className="accent-clay"
                 />
               </label>
             )}

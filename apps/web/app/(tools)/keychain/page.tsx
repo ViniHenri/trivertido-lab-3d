@@ -24,7 +24,7 @@ export default function KeychainPage() {
   const [contour, setContour] = useState<THREE.Vector2[] | null>(null);
   const [params, setParams] = useState<KeychainParams>(defaultKeychainParams);
   const [error, setError] = useState<string | null>(null);
-  const [color, setColor] = useState("#e8863a");
+  const [color, setColor] = useState("#c96a3b");
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Revetoriza quando muda arquivo/threshold/invert (com debounce)
@@ -67,12 +67,12 @@ export default function KeychainPage() {
           ) : (
             <button
               onClick={() => inputRef.current?.click()}
-              className="w-full h-[420px] rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50 hover:border-orange-500/50 transition-colors flex flex-col items-center justify-center gap-2"
+              className="w-full h-[420px] rounded-xl border-2 border-dashed border-white/15 bg-white/[0.03] hover:border-clay/50 transition-colors flex flex-col items-center justify-center gap-2"
             >
-              <span className="text-lg text-zinc-300">
+              <span className="text-lg text-white/80">
                 Clique pra escolher uma imagem
               </span>
-              <span className="text-sm text-zinc-500">
+              <span className="text-sm text-white/40">
                 Logos e silhuetas com fundo limpo dão o melhor resultado
               </span>
             </button>
@@ -89,11 +89,11 @@ export default function KeychainPage() {
           />
           {error && <p className="text-sm text-red-400">{error}</p>}
           {file && (
-            <div className="flex items-center gap-3 text-sm text-zinc-400">
+            <div className="flex items-center gap-3 text-sm text-white/55">
               <span>🖼️ {file.name}</span>
               <button
                 onClick={() => inputRef.current?.click()}
-                className="text-orange-400 hover:underline"
+                className="text-clay hover:underline"
               >
                 trocar imagem
               </button>
@@ -102,11 +102,11 @@ export default function KeychainPage() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+          <div className="flex flex-col gap-4 p-4 rounded-xl bg-white/[0.04] border border-white/10">
             <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-zinc-300">
+              <span className="flex justify-between text-white/80">
                 Detecção de borda (threshold)
-                <span className="text-zinc-500">{threshold.toFixed(2)}</span>
+                <span className="text-white/40">{threshold.toFixed(2)}</span>
               </span>
               <input
                 type="range"
@@ -115,22 +115,22 @@ export default function KeychainPage() {
                 step={0.05}
                 value={threshold}
                 onChange={(e) => setThreshold(Number(e.target.value))}
-                className="accent-orange-500"
+                className="accent-clay"
               />
             </label>
-            <label className="flex items-center justify-between text-sm text-zinc-300">
+            <label className="flex items-center justify-between text-sm text-white/80">
               Inverter figura/fundo
               <input
                 type="checkbox"
                 checked={invert}
                 onChange={(e) => setInvert(e.target.checked)}
-                className="accent-orange-500 w-4 h-4"
+                className="accent-clay w-4 h-4"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-zinc-300">
+              <span className="flex justify-between text-white/80">
                 Largura (mm)
-                <span className="text-zinc-500">{params.widthMM}</span>
+                <span className="text-white/40">{params.widthMM}</span>
               </span>
               <input
                 type="range"
@@ -141,13 +141,13 @@ export default function KeychainPage() {
                 onChange={(e) =>
                   setParams((p) => ({ ...p, widthMM: Number(e.target.value) }))
                 }
-                className="accent-orange-500"
+                className="accent-clay"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-zinc-300">
+              <span className="flex justify-between text-white/80">
                 Espessura (mm)
-                <span className="text-zinc-500">{params.thickness}</span>
+                <span className="text-white/40">{params.thickness}</span>
               </span>
               <input
                 type="range"
@@ -161,10 +161,10 @@ export default function KeychainPage() {
                     thickness: Number(e.target.value),
                   }))
                 }
-                className="accent-orange-500"
+                className="accent-clay"
               />
             </label>
-            <label className="flex items-center justify-between text-sm text-zinc-300">
+            <label className="flex items-center justify-between text-sm text-white/80">
               Argola pra corrente
               <input
                 type="checkbox"
@@ -172,7 +172,7 @@ export default function KeychainPage() {
                 onChange={(e) =>
                   setParams((p) => ({ ...p, ring: e.target.checked }))
                 }
-                className="accent-orange-500 w-4 h-4"
+                className="accent-clay w-4 h-4"
               />
             </label>
           </div>

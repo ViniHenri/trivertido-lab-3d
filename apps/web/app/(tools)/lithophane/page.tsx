@@ -65,12 +65,12 @@ export default function LithophanePage() {
           ) : (
             <button
               onClick={() => inputRef.current?.click()}
-              className="w-full h-[420px] rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50 hover:border-orange-500/50 transition-colors flex flex-col items-center justify-center gap-2"
+              className="w-full h-[420px] rounded-xl border-2 border-dashed border-white/15 bg-white/[0.03] hover:border-clay/50 transition-colors flex flex-col items-center justify-center gap-2"
             >
-              <span className="text-lg text-zinc-300">
+              <span className="text-lg text-white/80">
                 Clique pra escolher uma foto
               </span>
-              <span className="text-sm text-zinc-500">
+              <span className="text-sm text-white/40">
                 JPG, PNG ou WebP — fotos com bom contraste funcionam melhor
               </span>
             </button>
@@ -84,11 +84,11 @@ export default function LithophanePage() {
           />
           {error && <p className="text-sm text-red-400">{error}</p>}
           {fileName && (
-            <div className="flex items-center gap-3 text-sm text-zinc-400">
+            <div className="flex items-center gap-3 text-sm text-white/55">
               <span>📷 {fileName}</span>
               <button
                 onClick={() => inputRef.current?.click()}
-                className="text-orange-400 hover:underline"
+                className="text-clay hover:underline"
               >
                 trocar foto
               </button>
@@ -97,11 +97,11 @@ export default function LithophanePage() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+          <div className="flex flex-col gap-4 p-4 rounded-xl bg-white/[0.04] border border-white/10">
             <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-zinc-300">
+              <span className="flex justify-between text-white/80">
                 Largura (mm)
-                <span className="text-zinc-500">{params.widthMM}</span>
+                <span className="text-white/40">{params.widthMM}</span>
               </span>
               <input
                 type="range"
@@ -112,13 +112,13 @@ export default function LithophanePage() {
                 onChange={(e) =>
                   setParams((p) => ({ ...p, widthMM: Number(e.target.value) }))
                 }
-                className="accent-orange-500"
+                className="accent-clay"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-zinc-300">
+              <span className="flex justify-between text-white/80">
                 Espessura mínima (mm)
-                <span className="text-zinc-500">{params.minThickness}</span>
+                <span className="text-white/40">{params.minThickness}</span>
               </span>
               <input
                 type="range"
@@ -132,13 +132,13 @@ export default function LithophanePage() {
                     minThickness: Number(e.target.value),
                   }))
                 }
-                className="accent-orange-500"
+                className="accent-clay"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-zinc-300">
+              <span className="flex justify-between text-white/80">
                 Espessura máxima (mm)
-                <span className="text-zinc-500">{params.maxThickness}</span>
+                <span className="text-white/40">{params.maxThickness}</span>
               </span>
               <input
                 type="range"
@@ -152,10 +152,10 @@ export default function LithophanePage() {
                     maxThickness: Number(e.target.value),
                   }))
                 }
-                className="accent-orange-500"
+                className="accent-clay"
               />
             </label>
-            <label className="flex items-center justify-between text-sm text-zinc-300">
+            <label className="flex items-center justify-between text-sm text-white/80">
               Moldura
               <input
                 type="checkbox"
@@ -163,14 +163,14 @@ export default function LithophanePage() {
                 onChange={(e) =>
                   setParams((p) => ({ ...p, frame: e.target.checked }))
                 }
-                className="accent-orange-500 w-4 h-4"
+                className="accent-clay w-4 h-4"
               />
             </label>
             {params.frame && (
               <label className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between text-zinc-300">
+                <span className="flex justify-between text-white/80">
                   Largura da moldura (mm)
-                  <span className="text-zinc-500">{params.frameWidthMM}</span>
+                  <span className="text-white/40">{params.frameWidthMM}</span>
                 </span>
                 <input
                   type="range"
@@ -184,7 +184,7 @@ export default function LithophanePage() {
                       frameWidthMM: Number(e.target.value),
                     }))
                   }
-                  className="accent-orange-500"
+                  className="accent-clay"
                 />
               </label>
             )}
@@ -197,7 +197,7 @@ export default function LithophanePage() {
             fileName="litofania-trivertido"
           />
 
-          <p className="text-xs text-zinc-500 px-1">
+          <p className="text-xs text-white/40 px-1">
             Dica de impressão: filamento branco, 100% de preenchimento, peça em
             pé (de lado) pra melhor definição.
           </p>

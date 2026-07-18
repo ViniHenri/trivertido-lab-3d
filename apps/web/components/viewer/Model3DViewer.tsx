@@ -45,7 +45,7 @@ function GeometryMesh({
  */
 export default function Model3DViewer({
   geometry,
-  color = "#e8863a",
+  color = "#c96a3b",
   children,
   className,
 }: Model3DViewerProps) {
@@ -53,7 +53,7 @@ export default function Model3DViewer({
     <div
       className={
         className ??
-        "w-full h-[420px] rounded-xl overflow-hidden bg-zinc-900 border border-zinc-800"
+        "w-full h-[420px] rounded-2xl overflow-hidden bg-white/[0.03] border border-white/10"
       }
     >
       <Canvas shadows camera={{ position: [80, 60, 80], fov: 45 }}>

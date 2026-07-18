@@ -66,17 +66,17 @@ export default function LaserBoxPage() {
     >
       <div className="grid lg:grid-cols-[1fr_320px] gap-6">
         <div
-          className="w-full min-h-[420px] rounded-xl overflow-auto bg-white border border-zinc-800 p-4 [&_svg]:max-w-full [&_svg]:h-auto"
+          className="w-full min-h-[420px] rounded-xl overflow-auto bg-white border border-white/10 p-4 [&_svg]:max-w-full [&_svg]:h-auto"
           dangerouslySetInnerHTML={{ __html: svg }}
         />
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+          <div className="flex flex-col gap-4 p-4 rounded-xl bg-white/[0.04] border border-white/10">
             {SLIDERS.map(({ key, label, min, max, step }) => (
               <label key={key} className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between text-zinc-300">
+                <span className="flex justify-between text-white/80">
                   {label}
-                  <span className="text-zinc-500">
+                  <span className="text-white/40">
                     {params[key] as number}
                   </span>
                 </span>
@@ -92,11 +92,11 @@ export default function LaserBoxPage() {
                       [key]: Number(e.target.value),
                     }))
                   }
-                  className="accent-orange-500"
+                  className="accent-clay"
                 />
               </label>
             ))}
-            <label className="flex items-center justify-between text-sm text-zinc-300">
+            <label className="flex items-center justify-between text-sm text-white/80">
               Caixa fechada (com tampa)
               <input
                 type="checkbox"
@@ -104,7 +104,7 @@ export default function LaserBoxPage() {
                 onChange={(e) =>
                   setParams((p) => ({ ...p, closedTop: e.target.checked }))
                 }
-                className="accent-orange-500 w-4 h-4"
+                className="accent-clay w-4 h-4"
               />
             </label>
           </div>
@@ -116,7 +116,7 @@ export default function LaserBoxPage() {
             fileName="caixa-laser-trivertido"
           />
 
-          <p className="text-xs text-zinc-500 px-1">
+          <p className="text-xs text-white/40 px-1">
             As medidas são externas. A espessura do material define a
             profundidade dos encaixes — confira a espessura real da chapa antes
             de cortar.

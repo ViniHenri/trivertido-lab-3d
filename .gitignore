@@ -10,3 +10,5 @@ build/
 next-env.d.ts
 desktop.ini
 .DS_Store
+
+.vercel
