@@ -77,7 +77,7 @@ create table lab_generations (
 ## Roadmap
 
 - [x] **Fase 1** — Fundação: repo, viewer 3D genérico, Supabase, deploy
-- [ ] **Fase 2** — Paramétricas: Lithophane, ~~Vase~~ (pronto), Sign
+- [x] **Fase 2** — Paramétricas: Lithophane, Vase, Sign
 - [ ] **Fase 3** — Image to 3D (IA): integração 3D AI Studio + polling
 - [ ] **Fase 4** — Laser Box, Keychain (vetorização), Desk Organizer
 - [ ] **Fase 5** — Pedidos: n8n → Kanban → WhatsApp + cor de filamento via estoque

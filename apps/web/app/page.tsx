@@ -19,13 +19,13 @@ const TOOLS: Tool[] = [
     href: "/lithophane",
     title: "Lithophane Maker",
     description: "Sua foto vira litofania — a imagem aparece contra a luz.",
-    ready: false,
+    ready: true,
   },
   {
     href: "/sign",
     title: "Sign & Plate Maker",
     description: "Placas e letreiros com texto em relevo ou rebaixado.",
-    ready: false,
+    ready: true,
   },
   {
     href: "/image-to-3d",
