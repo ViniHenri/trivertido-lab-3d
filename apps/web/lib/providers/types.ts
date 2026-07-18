@@ -17,9 +17,11 @@ export interface ImageTo3DJobResult extends ImageTo3DJob {
   error?: string;
 }
 
+import type { ImageTo3DEngine } from "./engines";
+
 export interface ImageTo3DOptions {
-  /** "rapid" (padrão, mais barato) ou "pro" (mais qualidade) */
-  quality?: "rapid" | "pro";
+  /** Motor de geração — ver lib/providers/engines.ts pros detalhes de cada um */
+  engine?: ImageTo3DEngine;
 }
 
 /**

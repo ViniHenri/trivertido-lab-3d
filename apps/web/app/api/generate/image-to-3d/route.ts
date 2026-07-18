@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { activeProvider } from "@/lib/providers/3daistudio";
 import { InsufficientCreditsError } from "@/lib/providers/types";
+import { IMAGE_TO_3D_ENGINES, type ImageTo3DEngine } from "@/lib/providers/engines";
 import {
   getSupabaseAdminClient,
   LAB_GENERATIONS_TABLE,
@@ -11,6 +12,7 @@ export const runtime = "nodejs";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const VALID_ENGINES = new Set(IMAGE_TO_3D_ENGINES.map((e) => e.id));
 
 export async function POST(req: Request) {
   if (!checkRateLimit(getClientIp(req))) {
@@ -22,7 +24,10 @@ export async function POST(req: Request) {
 
   const formData = await req.formData();
   const file = formData.get("image");
-  const quality = formData.get("quality") === "pro" ? "pro" : "rapid";
+  const engineRaw = formData.get("engine");
+  const engine: ImageTo3DEngine = VALID_ENGINES.has(engineRaw as ImageTo3DEngine)
+    ? (engineRaw as ImageTo3DEngine)
+    : "tripo";
 
   if (!(file instanceof File)) {
     return NextResponse.json(
@@ -46,7 +51,7 @@ export async function POST(req: Request) {
   try {
     const job = await activeProvider.generate(
       { buffer: await file.arrayBuffer(), mimeType: file.type },
-      { quality }
+      { engine }
     );
 
     const supabase = getSupabaseAdminClient();
@@ -55,7 +60,7 @@ export async function POST(req: Request) {
       .insert({
         tool: "image-to-3d",
         status: "processing",
-        params: { quality, fileName: file.name },
+        params: { engine, fileName: file.name },
         provider_job_id: job.jobId,
       })
       .select("id")

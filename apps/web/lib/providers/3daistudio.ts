@@ -8,13 +8,13 @@ import {
 } from "./types";
 
 /**
- * Cliente da API do 3D AI Studio (Tripo image-to-3D).
+ * Cliente da API do 3D AI Studio — 3 motores de geração, um provider só.
  * Docs: https://www.3daistudio.com/Platform/API/Documentation
  *
- * Fluxo: POST /v1/3d-models/tripo/image-to-3d/ (imagem em data URI base64)
- * → { task_id } → GET /v1/generation-request/<task_id>/status/ até FINISHED
- * → results[0].asset é a URL do GLB (expira em 24h — por isso o status route
- * copia o arquivo pro Supabase Storage assim que fica pronto).
+ * Todos os motores seguem o mesmo fluxo assíncrono: POST no endpoint do
+ * motor → { task_id } → GET /v1/generation-request/<task_id>/status/ até
+ * FINISHED → results[].asset é a URL do GLB (expira — por isso o status
+ * route copia pro Supabase Storage assim que fica pronto).
  */
 const BASE_URL = "https://api.3daistudio.com/v1";
 
@@ -39,7 +39,37 @@ function mapStatus(raw: string): ProviderJobStatus {
     case "CREATED":
       return "queued";
     default:
-      return "processing"; // PROCESSING, RUNNING, etc.
+      return "processing";
+  }
+}
+
+/** Endpoint + corpo do POST variam por motor; o resto do fluxo é idêntico. */
+function buildRequest(
+  engine: ImageTo3DOptions["engine"],
+  dataUri: string
+): { path: string; body: Record<string, unknown> } {
+  switch (engine) {
+    case "trellis":
+      return {
+        path: "/3d-models/trellis2/generate/",
+        body: { image: dataUri, textures: true, resolution: "1024" },
+      };
+    case "hunyuan":
+      return {
+        path: "/3d-models/tencent/generate/pro/",
+        body: { model: "3.1", image: dataUri, enable_pbr: true },
+      };
+    case "tripo":
+    default:
+      return {
+        path: "/3d-models/tripo/image-to-3d/",
+        body: {
+          image: dataUri,
+          texture: true,
+          pbr: true,
+          enable_image_autofix: true,
+        },
+      };
   }
 }
 
@@ -48,22 +78,16 @@ export const threeDAIStudioProvider: ImageTo3DProvider = {
 
   async generate(image, options?: ImageTo3DOptions): Promise<ImageTo3DJob> {
     const base64 = Buffer.from(image.buffer).toString("base64");
-    const detailed = options?.quality === "pro";
+    const dataUri = `data:${image.mimeType};base64,${base64}`;
+    const { path, body } = buildRequest(options?.engine, dataUri);
 
-    const res = await fetch(`${BASE_URL}/3d-models/tripo/image-to-3d/`, {
+    const res = await fetch(`${BASE_URL}${path}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey()}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        image: `data:${image.mimeType};base64,${base64}`,
-        texture: true,
-        pbr: true,
-        texture_quality: detailed ? "detailed" : "standard",
-        geometry_quality: detailed ? "detailed" : "standard",
-        enable_image_autofix: true,
-      }),
+      body: JSON.stringify(body),
     });
 
     if (res.status === 402) throw new InsufficientCreditsError();

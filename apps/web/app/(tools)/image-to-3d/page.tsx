@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import * as THREE from "three";
 import { GLTFLoader } from "three-stdlib";
 import ToolShell from "@/components/ui/ToolShell";
+import { IMAGE_TO_3D_ENGINES, type ImageTo3DEngine } from "@/lib/providers/engines";
 
 const Model3DViewer = dynamic(
   () => import("@/components/viewer/Model3DViewer"),
@@ -27,7 +28,7 @@ const POLL_MS = 5000;
 
 export default function ImageTo3DPage() {
   const [stage, setStage] = useState<Stage>({ name: "idle" });
-  const [quality, setQuality] = useState<"rapid" | "pro">("rapid");
+  const [engine, setEngine] = useState<ImageTo3DEngine>("tripo");
   const [preview, setPreview] = useState<string | null>(null);
   const [orderState, setOrderState] = useState<{
     open: boolean;
@@ -108,7 +109,7 @@ export default function ImageTo3DPage() {
 
     const formData = new FormData();
     formData.append("image", file);
-    formData.append("quality", quality);
+    formData.append("engine", engine);
 
     try {
       const res = await fetch("/api/generate/image-to-3d", {
@@ -237,30 +238,37 @@ export default function ImageTo3DPage() {
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 p-4 rounded-xl bg-white/[0.04] border border-white/10">
-            <span className="text-sm text-white/80">Qualidade</span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setQuality("rapid")}
-                disabled={busy}
-                className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
-                  quality === "rapid"
-                    ? "bg-mint/15 border-mint text-mint"
-                    : "bg-white/[0.06] border-white/15 text-white/55"
-                }`}
-              >
-                Rápida
-              </button>
-              <button
-                onClick={() => setQuality("pro")}
-                disabled={busy}
-                className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
-                  quality === "pro"
-                    ? "bg-mint/15 border-mint text-mint"
-                    : "bg-white/[0.06] border-white/15 text-white/55"
-                }`}
-              >
-                Pro (mais detalhes)
-              </button>
+            <span className="text-sm text-white/80">Motor de geração</span>
+            <div className="flex flex-col gap-2">
+              {IMAGE_TO_3D_ENGINES.map((e) => (
+                <button
+                  key={e.id}
+                  onClick={() => setEngine(e.id)}
+                  disabled={busy}
+                  className={`text-left px-3 py-2.5 rounded-lg border transition-colors ${
+                    engine === e.id
+                      ? "bg-mint/10 border-mint"
+                      : "bg-white/[0.03] border-white/10 hover:border-white/20"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`text-sm font-medium ${
+                        engine === e.id ? "text-mint" : "text-white/85"
+                      }`}
+                    >
+                      {e.label}
+                    </span>
+                    <span className="font-mono text-[10px] text-white/40">
+                      {e.time}
+                    </span>
+                  </div>
+                  <p className="text-xs text-white/45 mt-0.5">{e.tagline}</p>
+                  <p className="font-mono text-[10px] text-white/30 mt-1">
+                    {e.credits}
+                  </p>
+                </button>
+              ))}
             </div>
           </div>
 
@@ -328,9 +336,10 @@ export default function ImageTo3DPage() {
           )}
 
           <p className="text-xs text-white/40 px-1">
-            Esta ferramenta usa IA generativa — cada geração consome créditos.
-            O modelo Rápido é ótimo pra maioria dos casos; use o Pro pra peças
-            com muitos detalhes finos.
+            Cada geração consome créditos da conta 3D AI Studio. Tripo é o
+            ponto de partida recomendado — a malha sai mais organizada pra
+            imprimir. Troque pra Hunyuan Pro quando precisar de mais detalhe
+            (custa mais e demora mais).
           </p>
         </div>
       </div>
