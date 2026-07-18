@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/client";
 
 export const runtime = "nodejs";
-export const revalidate = 300; // cache de 5 min — estoque não muda a cada request
+export const dynamic = "force-dynamic"; // nunca prerenderizar no build (precisa do Supabase em runtime)
 
 export interface FilamentColor {
   id: number;
