@@ -80,11 +80,27 @@ create table lab_generations (
 - [x] **Fase 2** — Paramétricas: Lithophane, Vase, Sign
 - [x] **Fase 3** — Image to 3D (IA): integração 3D AI Studio + polling + Storage (requer `THREEDAI_STUDIO_API_KEY`)
 - [x] **Fase 4** — Laser Box, Keychain (vetorização), Desk Organizer
-- [x] **Fase 5** — Pedidos: cor de filamento via estoque (`stock`); webhook n8n pronto no código (requer `N8N_WEBHOOK_URL` + workflow no n8n)
+- [x] **Fase 5** — Pedidos: cor de filamento via estoque (`stock`); "Pedir impressão" cria tarefa direto no Kanban (tabela `tasks`)
 
-## Payload do webhook n8n (pedido de impressão)
+## Pedido de impressão (uso interno)
 
-O `/api/webhook/n8n` envia POST com:
+O Lab é de uso interno — quando alguém clica "Pedir impressão", a rota
+`/api/webhook/n8n` (nome legado, não depende mais de n8n) faz duas coisas:
+
+1. Atualiza o registro em `lab_generations` (status `ordered`, cliente, cor)
+2. Insere uma tarefa direto na tabela `tasks` (mesmo Kanban do app de gestão),
+   com o link do modelo (URL assinada, válida por 1 ano) na coluna `link`
+
+Rodar uma vez no SQL Editor do Supabase, pra habilitar a coluna do link:
+
+```sql
+alter table tasks add column if not exists link text;
+```
+
+Sem essa coluna a tarefa ainda é criada normalmente, só sem o link do modelo.
+
+Notificação via WhatsApp (n8n + Evolution API) é opcional — se quiser reativar,
+basta configurar `N8N_WEBHOOK_URL`. O payload enviado (quando configurado):
 
 ```json
 {
@@ -99,11 +115,9 @@ O `/api/webhook/n8n` envia POST com:
     "filament_color": "PLA Amarelo Lite (PLA)",
     "notes": null
   },
-  "modelUrl": "https://...url assinada válida por 7 dias..."
+  "modelUrl": "https://...url assinada..."
 }
 ```
-
-O workflow no n8n deve: criar tarefa no Kanban (tabela `tasks`) e notificar o dono via WhatsApp (Evolution API, instância Trivertido).
 
 ## Deploy (Vercel)
 
