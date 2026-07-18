@@ -111,16 +111,16 @@ export default function Home() {
           Ferramentas paramétricas — sem custo de IA
         </p>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px rounded-2xl overflow-hidden bg-white/10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {TOOLS.map((tool) => {
             const Icon = tool.icon;
             return (
               <Link
                 key={tool.href}
                 href={tool.href}
-                className="group bg-background p-6 flex flex-col gap-4 transition-colors hover:bg-white/[0.04]"
+                className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 flex flex-col gap-4 transition-colors hover:border-mint/30 hover:bg-white/[0.05]"
               >
-                <div className="text-white/70 group-hover:text-mint transition-colors">
+                <div className="w-11 h-11 rounded-xl bg-mint/10 flex items-center justify-center text-mint transition-colors group-hover:bg-mint/15">
                   <Icon />
                 </div>
                 <div>

@@ -9,6 +9,7 @@ const base = {
   strokeWidth: 1.5,
   strokeLinecap: "round" as const,
   strokeLinejoin: "round" as const,
+  className: "w-6 h-6",
 };
 
 export function VaseIcon() {
