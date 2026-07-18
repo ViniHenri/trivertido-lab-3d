@@ -30,6 +30,7 @@ export default function ImageTo3DPage() {
   const [stage, setStage] = useState<Stage>({ name: "idle" });
   const [engine, setEngine] = useState<ImageTo3DEngine>("tripo");
   const [preview, setPreview] = useState<string | null>(null);
+  const [balance, setBalance] = useState<number | null>(null);
   const [orderState, setOrderState] = useState<{
     open: boolean;
     name: string;
@@ -39,6 +40,17 @@ export default function ImageTo3DPage() {
   }>({ open: false, name: "", phone: "", sending: false, message: null });
   const inputRef = useRef<HTMLInputElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetchBalance = useCallback(() => {
+    fetch("/api/generate/balance")
+      .then((r) => r.json())
+      .then((d) => setBalance(typeof d.balance === "number" ? d.balance : null))
+      .catch(() => setBalance(null));
+  }, []);
+
+  useEffect(() => {
+    fetchBalance();
+  }, [fetchBalance]);
 
   useEffect(() => {
     return () => {
@@ -72,12 +84,14 @@ export default function ImageTo3DPage() {
           if (data.status === "completed" && data.modelUrl) {
             if (pollRef.current) clearInterval(pollRef.current);
             await loadModel(data.modelUrl, data.generationId ?? null);
+            fetchBalance();
           } else if (data.status === "failed") {
             if (pollRef.current) clearInterval(pollRef.current);
             setStage({
               name: "error",
               message: data.error ?? "A geração falhou. Tente outra imagem.",
             });
+            fetchBalance();
           } else {
             setStage({
               name: "processing",
@@ -90,7 +104,7 @@ export default function ImageTo3DPage() {
         }
       }, POLL_MS);
     },
-    [loadModel]
+    [loadModel, fetchBalance]
   );
 
   async function onFile(file: File | undefined) {
@@ -237,6 +251,23 @@ export default function ImageTo3DPage() {
         </div>
 
         <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.04] border border-white/10">
+            <span className="font-mono text-[10px] tracking-wide text-white/40 uppercase">
+              Saldo 3D AI Studio
+            </span>
+            {balance === null ? (
+              <span className="text-sm text-white/30">—</span>
+            ) : (
+              <span
+                className={`text-sm font-medium tabular-nums ${
+                  balance < 1 ? "text-red-400" : "text-white/85"
+                }`}
+              >
+                ${balance.toFixed(2)}
+              </span>
+            )}
+          </div>
+
           <div className="flex flex-col gap-3 p-4 rounded-xl bg-white/[0.04] border border-white/10">
             <span className="text-sm text-white/80">Motor de geração</span>
             <div className="flex flex-col gap-2">

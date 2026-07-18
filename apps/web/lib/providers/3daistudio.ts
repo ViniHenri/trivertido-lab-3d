@@ -133,3 +133,19 @@ export const threeDAIStudioProvider: ImageTo3DProvider = {
 
 /** Provedor ativo — trocar aqui se migrar de fornecedor. */
 export const activeProvider: ImageTo3DProvider = threeDAIStudioProvider;
+
+/**
+ * Saldo pré-pago da conta 3D AI Studio, em dólares.
+ * Endpoint fora do padrão /v1/ do resto da API — é o que a doc oficial usa.
+ */
+export async function getCreditBalance(): Promise<number> {
+  const res = await fetch("https://api.3daistudio.com/account/user/wallet/", {
+    headers: { Authorization: `Bearer ${apiKey()}` },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`3D AI Studio: ${res.status} ${await res.text()}`);
+  }
+  const data = (await res.json()) as { balance: string };
+  return Number(data.balance);
+}
