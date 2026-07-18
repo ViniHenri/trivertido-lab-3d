@@ -34,6 +34,7 @@ const SLIDERS: SliderConfig[] = [
 
 export default function VasePage() {
   const [params, setParams] = useState<VaseParams>(defaultVaseParams);
+  const [color, setColor] = useState("#e8863a");
 
   const geometry = useMemo(() => generateVaseGeometry(params), [params]);
 
@@ -43,7 +44,7 @@ export default function VasePage() {
       description="Crie vasos personalizados ajustando o perfil em tempo real. 100% no navegador, sem custo."
     >
       <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-        <Model3DViewer geometry={geometry} />
+        <Model3DViewer geometry={geometry} color={color} />
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
             {SLIDERS.map(({ key, label, min, max, step }) => (
@@ -74,6 +75,7 @@ export default function VasePage() {
             tool="vase"
             params={params as unknown as Record<string, unknown>}
             fileName="vaso-trivertido"
+            onColorChange={setColor}
           />
         </div>
       </div>

@@ -31,26 +31,26 @@ const TOOLS: Tool[] = [
     href: "/image-to-3d",
     title: "Image to 3D",
     description: "Foto vira modelo 3D completo, gerado por IA.",
-    ready: false,
+    ready: true,
     badge: "IA",
   },
   {
     href: "/keychain",
     title: "Image to Keychain",
     description: "Logo ou desenho vira chaveiro com furo pra argola.",
-    ready: false,
+    ready: true,
   },
   {
     href: "/laser-box",
     title: "Laser Box Maker",
     description: "Caixas finger joint em SVG/DXF pra corte a laser.",
-    ready: false,
+    ready: true,
   },
   {
     href: "/desk-organizer",
     title: "Desk Organizer",
     description: "Organizadores de mesa com grid de compartimentos.",
-    ready: false,
+    ready: true,
   },
 ];
 

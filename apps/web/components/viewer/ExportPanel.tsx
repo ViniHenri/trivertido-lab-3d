@@ -1,16 +1,29 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import * as THREE from "three";
 import { STLExporter } from "three-stdlib";
 import type { GenerationTool } from "@/lib/supabase/types";
+import type { FilamentColor } from "@/app/api/stock/colors/route";
+
+/** Arquivo exportável gerado no client (STL, SVG, DXF...) */
+export interface ExportFile {
+  format: "stl" | "svg" | "dxf";
+  label: string;
+  make: () => Blob | null;
+}
 
 export interface ExportPanelProps {
-  geometry: THREE.BufferGeometry | null;
+  /** Atalho: geometria 3D → botão "Baixar STL" automático */
+  geometry?: THREE.BufferGeometry | null;
+  /** Alternativa: lista custom de arquivos (ex.: SVG/DXF do laser box) */
+  files?: ExportFile[];
   tool: GenerationTool;
   /** Parâmetros atuais da ferramenta, gravados junto do pedido */
   params?: Record<string, unknown>;
   fileName?: string;
+  /** Callback opcional quando a cor de filamento muda (pra pintar o preview) */
+  onColorChange?: (hex: string) => void;
 }
 
 function geometryToSTLBlob(geometry: THREE.BufferGeometry): Blob {
@@ -22,42 +35,76 @@ function geometryToSTLBlob(geometry: THREE.BufferGeometry): Blob {
 }
 
 /**
- * Painel padrão de exportação: baixar STL local (grátis, sem rede)
- * ou enviar pedido de impressão pra Trivertido (salva no Supabase + n8n).
+ * Painel padrão de exportação: baixar arquivos localmente (grátis, sem rede)
+ * ou enviar pedido de impressão pra Trivertido (Supabase + n8n), com escolha
+ * de cor de filamento puxada do estoque real.
  */
 export default function ExportPanel({
   geometry,
+  files,
   tool,
   params = {},
   fileName = "modelo-trivertido",
+  onColorChange,
 }: ExportPanelProps) {
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [showOrderForm, setShowOrderForm] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
+  const [colors, setColors] = useState<FilamentColor[]>([]);
+  const [colorId, setColorId] = useState<number | null>(null);
 
-  const downloadSTL = useCallback(() => {
-    if (!geometry) return;
-    const blob = geometryToSTLBlob(geometry);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${fileName}.stl`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [geometry, fileName]);
+  const exportFiles: ExportFile[] =
+    files ??
+    (geometry !== undefined
+      ? [
+          {
+            format: "stl",
+            label: "Baixar STL",
+            make: () => (geometry ? geometryToSTLBlob(geometry) : null),
+          },
+        ]
+      : []);
+
+  const hasContent = files ? files.length > 0 : !!geometry;
+
+  // Carrega as cores do estoque quando o formulário de pedido abre
+  useEffect(() => {
+    if (!showOrderForm || colors.length > 0) return;
+    fetch("/api/stock/colors")
+      .then((r) => r.json())
+      .then((d) => setColors(d.colors ?? []))
+      .catch(() => setColors([]));
+  }, [showOrderForm, colors.length]);
+
+  const download = useCallback(
+    (file: ExportFile) => {
+      const blob = file.make();
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${fileName}.${file.format}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+    [fileName]
+  );
 
   const sendOrder = useCallback(async () => {
-    if (!geometry || !customerName || !customerPhone) return;
+    const primary = exportFiles[0];
+    if (!primary || !customerName || !customerPhone) return;
+    const blob = primary.make();
+    if (!blob) return;
+
     setSending(true);
     setMessage(null);
     try {
-      const blob = geometryToSTLBlob(geometry);
       const formData = new FormData();
-      formData.append("file", blob, `${fileName}.stl`);
+      formData.append("file", blob, `${fileName}.${primary.format}`);
       formData.append("tool", tool);
-      formData.append("format", "stl");
+      formData.append("format", primary.format);
       formData.append("params", JSON.stringify(params));
 
       const exportRes = await fetch("/api/export", {
@@ -67,6 +114,7 @@ export default function ExportPanel({
       const exportData = await exportRes.json();
       if (!exportRes.ok) throw new Error(exportData.error);
 
+      const chosen = colors.find((c) => c.id === colorId);
       const orderRes = await fetch("/api/webhook/n8n", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -74,6 +122,9 @@ export default function ExportPanel({
           generationId: exportData.generationId,
           customerName,
           customerPhone,
+          filamentColor: chosen
+            ? `${chosen.cor_nome} (${chosen.tipo})`
+            : undefined,
         }),
       });
       const orderData = await orderRes.json();
@@ -88,21 +139,33 @@ export default function ExportPanel({
     } finally {
       setSending(false);
     }
-  }, [geometry, tool, params, fileName, customerName, customerPhone]);
+  }, [
+    exportFiles,
+    tool,
+    params,
+    fileName,
+    customerName,
+    customerPhone,
+    colors,
+    colorId,
+  ]);
 
   return (
     <div className="flex flex-col gap-3 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
       <div className="flex flex-wrap gap-3">
-        <button
-          onClick={downloadSTL}
-          disabled={!geometry}
-          className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600 disabled:opacity-40 text-sm font-medium"
-        >
-          Baixar STL
-        </button>
+        {exportFiles.map((f) => (
+          <button
+            key={f.format}
+            onClick={() => download(f)}
+            disabled={!hasContent}
+            className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600 disabled:opacity-40 text-sm font-medium"
+          >
+            {f.label}
+          </button>
+        ))}
         <button
           onClick={() => setShowOrderForm((v) => !v)}
-          disabled={!geometry}
+          disabled={!hasContent}
           className="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 disabled:opacity-40 text-sm font-medium"
         >
           Pedir impressão
@@ -123,6 +186,37 @@ export default function ExportPanel({
             placeholder="WhatsApp (com DDD)"
             className="px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm"
           />
+
+          {colors.length > 0 && (
+            <div className="flex flex-col gap-1.5">
+              <span className="text-sm text-zinc-300">Cor do filamento</span>
+              <div className="flex flex-wrap gap-2">
+                {colors.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => {
+                      setColorId(c.id);
+                      onColorChange?.(c.cor);
+                    }}
+                    title={`${c.cor_nome} (${c.tipo})`}
+                    className={`w-8 h-8 rounded-full border-2 transition-transform ${
+                      colorId === c.id
+                        ? "border-orange-400 scale-110"
+                        : "border-zinc-600"
+                    }`}
+                    style={{ backgroundColor: c.cor }}
+                  />
+                ))}
+              </div>
+              {colorId && (
+                <span className="text-xs text-zinc-500">
+                  {colors.find((c) => c.id === colorId)?.cor_nome} (
+                  {colors.find((c) => c.id === colorId)?.tipo})
+                </span>
+              )}
+            </div>
+          )}
+
           <button
             onClick={sendOrder}
             disabled={sending || !customerName || !customerPhone}

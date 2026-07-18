@@ -1,13 +1,99 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import ToolShell from "@/components/ui/ToolShell";
-import ComingSoon from "@/components/ui/ComingSoon";
+import ExportPanel from "@/components/viewer/ExportPanel";
+import {
+  generateDeskOrganizerGeometry,
+  defaultDeskOrganizerParams,
+  type DeskOrganizerParams,
+} from "@/lib/geometry/deskOrganizer";
+
+const Model3DViewer = dynamic(
+  () => import("@/components/viewer/Model3DViewer"),
+  { ssr: false }
+);
+
+const SLIDERS: Array<{
+  key: keyof DeskOrganizerParams;
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+}> = [
+  { key: "widthMM", label: "Largura (mm)", min: 60, max: 250, step: 5 },
+  { key: "depthMM", label: "Profundidade (mm)", min: 60, max: 250, step: 5 },
+  { key: "heightMM", label: "Altura (mm)", min: 25, max: 120, step: 5 },
+  { key: "cols", label: "Colunas", min: 1, max: 6, step: 1 },
+  { key: "rows", label: "Linhas", min: 1, max: 6, step: 1 },
+  {
+    key: "wallThickness",
+    label: "Espessura da parede (mm)",
+    min: 1.2,
+    max: 4,
+    step: 0.4,
+  },
+];
 
 export default function DeskOrganizerPage() {
+  const [params, setParams] = useState<DeskOrganizerParams>(
+    defaultDeskOrganizerParams
+  );
+  const [color, setColor] = useState("#e8863a");
+
+  const geometry = useMemo(
+    () => generateDeskOrganizerGeometry(params),
+    [params]
+  );
+
   return (
     <ToolShell
       title="Desk Organizer"
-      description="Organizadores de mesa com compartimentos configuráveis do seu jeito."
+      description="Organizador de mesa com grade de compartimentos do seu jeito. 100% no navegador."
     >
-      <ComingSoon phase="Fase 4" />
+      <div className="grid lg:grid-cols-[1fr_320px] gap-6">
+        <Model3DViewer geometry={geometry} color={color} />
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+            {SLIDERS.map(({ key, label, min, max, step }) => (
+              <label key={key} className="flex flex-col gap-1 text-sm">
+                <span className="flex justify-between text-zinc-300">
+                  {label}
+                  <span className="text-zinc-500">{params[key]}</span>
+                </span>
+                <input
+                  type="range"
+                  min={min}
+                  max={max}
+                  step={step}
+                  value={params[key]}
+                  onChange={(e) =>
+                    setParams((p) => ({
+                      ...p,
+                      [key]: Number(e.target.value),
+                    }))
+                  }
+                  className="accent-orange-500"
+                />
+              </label>
+            ))}
+            <p className="text-xs text-zinc-500">
+              {params.cols * params.rows} compartimento
+              {params.cols * params.rows > 1 ? "s" : ""}
+            </p>
+          </div>
+
+          <ExportPanel
+            geometry={geometry}
+            tool="desk-organizer"
+            params={params as unknown as Record<string, unknown>}
+            fileName="organizador-trivertido"
+            onColorChange={setColor}
+          />
+        </div>
+      </div>
     </ToolShell>
   );
 }

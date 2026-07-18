@@ -1,13 +1,339 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import * as THREE from "three";
+import { GLTFLoader } from "three-stdlib";
 import ToolShell from "@/components/ui/ToolShell";
-import ComingSoon from "@/components/ui/ComingSoon";
+
+const Model3DViewer = dynamic(
+  () => import("@/components/viewer/Model3DViewer"),
+  { ssr: false }
+);
+
+type Stage =
+  | { name: "idle" }
+  | { name: "uploading" }
+  | { name: "processing"; jobId: string; progress?: number }
+  | {
+      name: "done";
+      generationId: string | null;
+      modelUrl: string;
+      object: THREE.Group | null;
+    }
+  | { name: "error"; message: string };
+
+const POLL_MS = 5000;
 
 export default function ImageTo3DPage() {
+  const [stage, setStage] = useState<Stage>({ name: "idle" });
+  const [quality, setQuality] = useState<"rapid" | "pro">("rapid");
+  const [preview, setPreview] = useState<string | null>(null);
+  const [orderState, setOrderState] = useState<{
+    open: boolean;
+    name: string;
+    phone: string;
+    sending: boolean;
+    message: string | null;
+  }>({ open: false, name: "", phone: "", sending: false, message: null });
+  const inputRef = useRef<HTMLInputElement>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+      if (preview) URL.revokeObjectURL(preview);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const loadModel = useCallback(
+    async (modelUrl: string, generationId: string | null) => {
+      try {
+        const gltf = await new GLTFLoader().loadAsync(modelUrl);
+        setStage({ name: "done", generationId, modelUrl, object: gltf.scene });
+      } catch {
+        // GLB não carregou no viewer, mas o arquivo existe — deixa baixar
+        setStage({ name: "done", generationId, modelUrl, object: null });
+      }
+    },
+    []
+  );
+
+  const startPolling = useCallback(
+    (jobId: string) => {
+      pollRef.current = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/generate/status/${jobId}`);
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error);
+
+          if (data.status === "completed" && data.modelUrl) {
+            if (pollRef.current) clearInterval(pollRef.current);
+            await loadModel(data.modelUrl, data.generationId ?? null);
+          } else if (data.status === "failed") {
+            if (pollRef.current) clearInterval(pollRef.current);
+            setStage({
+              name: "error",
+              message: data.error ?? "A geração falhou. Tente outra imagem.",
+            });
+          } else {
+            setStage({
+              name: "processing",
+              jobId,
+              progress: data.progress,
+            });
+          }
+        } catch {
+          // erro transitório de rede: mantém o polling
+        }
+      }, POLL_MS);
+    },
+    [loadModel]
+  );
+
+  async function onFile(file: File | undefined) {
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setStage({ name: "error", message: "Use uma imagem JPG, PNG ou WebP." });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setStage({ name: "error", message: "Imagem muito grande (máx. 10MB)." });
+      return;
+    }
+
+    setPreview(URL.createObjectURL(file));
+    setStage({ name: "uploading" });
+
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("quality", quality);
+
+    try {
+      const res = await fetch("/api/generate/image-to-3d", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setStage({ name: "processing", jobId: data.jobId });
+      startPolling(data.jobId);
+    } catch (err) {
+      setStage({
+        name: "error",
+        message:
+          err instanceof Error ? err.message : "Falha ao enviar a imagem.",
+      });
+    }
+  }
+
+  async function sendOrder() {
+    if (stage.name !== "done" || !stage.generationId) return;
+    setOrderState((s) => ({ ...s, sending: true, message: null }));
+    try {
+      const res = await fetch("/api/webhook/n8n", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          generationId: stage.generationId,
+          customerName: orderState.name,
+          customerPhone: orderState.phone,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setOrderState((s) => ({
+        ...s,
+        sending: false,
+        open: false,
+        message: "Pedido enviado! Entraremos em contato pelo WhatsApp.",
+      }));
+    } catch (err) {
+      setOrderState((s) => ({
+        ...s,
+        sending: false,
+        message: err instanceof Error ? err.message : "Falha ao enviar.",
+      }));
+    }
+  }
+
+  const busy = stage.name === "uploading" || stage.name === "processing";
+
   return (
     <ToolShell
       title="Image to 3D"
-      description="Transforme uma foto em modelo 3D pronto pra impressão usando IA."
+      description="Envie uma foto e a IA gera um modelo 3D completo, pronto pra impressão."
     >
-      <ComingSoon phase="Fase 3" />
+      <div className="grid lg:grid-cols-[1fr_320px] gap-6">
+        <div className="flex flex-col gap-4">
+          {stage.name === "done" && stage.object ? (
+            <Model3DViewer>
+              <primitive object={stage.object} />
+            </Model3DViewer>
+          ) : (
+            <div className="w-full h-[420px] rounded-xl border-2 border-dashed border-zinc-700 bg-zinc-900/50 flex flex-col items-center justify-center gap-3 relative overflow-hidden">
+              {preview && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={preview}
+                  alt="Imagem enviada"
+                  className="absolute inset-0 w-full h-full object-contain opacity-20"
+                />
+              )}
+              <div className="relative z-10 flex flex-col items-center gap-3 text-center px-4">
+                {busy ? (
+                  <>
+                    <div className="w-10 h-10 border-4 border-zinc-700 border-t-orange-500 rounded-full animate-spin" />
+                    <p className="text-zinc-300">
+                      {stage.name === "uploading"
+                        ? "Enviando imagem..."
+                        : `Gerando modelo 3D... ${
+                            stage.name === "processing" &&
+                            stage.progress != null
+                              ? `${Math.round(stage.progress)}%`
+                              : ""
+                          }`}
+                    </p>
+                    <p className="text-sm text-zinc-500">
+                      Isso costuma levar de 1 a 3 minutos. Pode deixar a página
+                      aberta.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => inputRef.current?.click()}
+                      className="px-5 py-3 rounded-lg bg-orange-600 hover:bg-orange-500 font-medium"
+                    >
+                      Escolher imagem
+                    </button>
+                    <p className="text-sm text-zinc-500">
+                      JPG, PNG ou WebP até 10MB. Objetos bem iluminados e com
+                      fundo limpo geram os melhores modelos.
+                    </p>
+                    {stage.name === "error" && (
+                      <p className="text-sm text-red-400">{stage.message}</p>
+                    )}
+                    {stage.name === "done" && !stage.object && (
+                      <p className="text-sm text-zinc-400">
+                        Modelo gerado! O preview 3D não carregou, mas o download
+                        está disponível ao lado.
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(e) => onFile(e.target.files?.[0])}
+          />
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+            <span className="text-sm text-zinc-300">Qualidade</span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setQuality("rapid")}
+                disabled={busy}
+                className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
+                  quality === "rapid"
+                    ? "bg-orange-600/20 border-orange-500 text-orange-300"
+                    : "bg-zinc-800 border-zinc-700 text-zinc-400"
+                }`}
+              >
+                Rápida
+              </button>
+              <button
+                onClick={() => setQuality("pro")}
+                disabled={busy}
+                className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
+                  quality === "pro"
+                    ? "bg-orange-600/20 border-orange-500 text-orange-300"
+                    : "bg-zinc-800 border-zinc-700 text-zinc-400"
+                }`}
+              >
+                Pro (mais detalhes)
+              </button>
+            </div>
+          </div>
+
+          {stage.name === "done" && (
+            <div className="flex flex-col gap-3 p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+              <a
+                href={stage.modelUrl}
+                download="modelo-trivertido"
+                className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600 text-sm font-medium text-center"
+              >
+                Baixar modelo 3D
+              </a>
+              {stage.generationId && (
+                <button
+                  onClick={() =>
+                    setOrderState((s) => ({ ...s, open: !s.open }))
+                  }
+                  className="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 text-sm font-medium"
+                >
+                  Pedir impressão
+                </button>
+              )}
+              {orderState.open && (
+                <div className="flex flex-col gap-2 pt-2 border-t border-zinc-800">
+                  <input
+                    value={orderState.name}
+                    onChange={(e) =>
+                      setOrderState((s) => ({ ...s, name: e.target.value }))
+                    }
+                    placeholder="Seu nome"
+                    className="px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm"
+                  />
+                  <input
+                    value={orderState.phone}
+                    onChange={(e) =>
+                      setOrderState((s) => ({ ...s, phone: e.target.value }))
+                    }
+                    placeholder="WhatsApp (com DDD)"
+                    className="px-3 py-2 rounded-lg bg-zinc-800 border border-zinc-700 text-sm"
+                  />
+                  <button
+                    onClick={sendOrder}
+                    disabled={
+                      orderState.sending || !orderState.name || !orderState.phone
+                    }
+                    className="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 disabled:opacity-40 text-sm font-medium"
+                  >
+                    {orderState.sending ? "Enviando..." : "Confirmar pedido"}
+                  </button>
+                </div>
+              )}
+              {orderState.message && (
+                <p className="text-sm text-zinc-300">{orderState.message}</p>
+              )}
+              <button
+                onClick={() => {
+                  setStage({ name: "idle" });
+                  setPreview(null);
+                }}
+                className="text-sm text-orange-400 hover:underline"
+              >
+                Gerar outro modelo
+              </button>
+            </div>
+          )}
+
+          <p className="text-xs text-zinc-500 px-1">
+            Esta ferramenta usa IA generativa — cada geração consome créditos.
+            O modelo Rápido é ótimo pra maioria dos casos; use o Pro pra peças
+            com muitos detalhes finos.
+          </p>
+        </div>
+      </div>
     </ToolShell>
   );
 }

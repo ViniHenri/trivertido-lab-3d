@@ -78,9 +78,32 @@ create table lab_generations (
 
 - [x] **Fase 1** — Fundação: repo, viewer 3D genérico, Supabase, deploy
 - [x] **Fase 2** — Paramétricas: Lithophane, Vase, Sign
-- [ ] **Fase 3** — Image to 3D (IA): integração 3D AI Studio + polling
-- [ ] **Fase 4** — Laser Box, Keychain (vetorização), Desk Organizer
-- [ ] **Fase 5** — Pedidos: n8n → Kanban → WhatsApp + cor de filamento via estoque
+- [x] **Fase 3** — Image to 3D (IA): integração 3D AI Studio + polling + Storage (requer `THREEDAI_STUDIO_API_KEY`)
+- [x] **Fase 4** — Laser Box, Keychain (vetorização), Desk Organizer
+- [x] **Fase 5** — Pedidos: cor de filamento via estoque (`stock`); webhook n8n pronto no código (requer `N8N_WEBHOOK_URL` + workflow no n8n)
+
+## Payload do webhook n8n (pedido de impressão)
+
+O `/api/webhook/n8n` envia POST com:
+
+```json
+{
+  "source": "trivertido-lab",
+  "generation": {
+    "id": "uuid",
+    "tool": "vase | lithophane | sign | keychain | laser-box | desk-organizer | image-to-3d",
+    "file_path": "vase/xxx.stl",
+    "file_format": "stl",
+    "customer_name": "Nome",
+    "customer_phone": "11999999999",
+    "filament_color": "PLA Amarelo Lite (PLA)",
+    "notes": null
+  },
+  "modelUrl": "https://...url assinada válida por 7 dias..."
+}
+```
+
+O workflow no n8n deve: criar tarefa no Kanban (tabela `tasks`) e notificar o dono via WhatsApp (Evolution API, instância Trivertido).
 
 ## Deploy (Vercel)
 
