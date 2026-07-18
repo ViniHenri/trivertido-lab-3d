@@ -57,19 +57,17 @@ const TOOLS: Tool[] = [
 
 export default function Home() {
   return (
-    <main className="max-w-5xl mx-auto w-full px-6 py-16 sm:py-24 flex flex-col gap-24 sm:gap-32">
-      <section className="flex flex-col gap-8">
-        <p className="font-mono text-xs tracking-[0.2em] text-clay uppercase">
+    <main className="max-w-5xl mx-auto w-full px-6 py-10 sm:py-14 flex flex-col gap-14 sm:gap-16">
+      <section className="flex flex-col gap-5">
+        <p className="font-mono text-xs tracking-[0.2em] text-mint uppercase">
           Trivertido 3D
         </p>
 
-        <h1 className="text-[2.75rem] sm:text-6xl font-semibold tracking-tight leading-[1.05] max-w-2xl">
-          Uma foto.
-          <br />
-          Um modelo 3D.
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+          Uma foto. Um modelo 3D.
         </h1>
 
-        <p className="text-white/55 text-lg max-w-lg leading-relaxed">
+        <p className="text-white/55 max-w-lg leading-relaxed">
           Gere peças prontas pra impressão a partir de uma imagem, ou
           personalize vasos, placas e outros objetos direto no navegador —
           sem saber nada de modelagem.
@@ -78,19 +76,19 @@ export default function Home() {
         {/* CTA principal — a peça central da página */}
         <Link
           href="/image-to-3d"
-          className="group relative mt-4 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-8 sm:p-10 flex flex-col sm:flex-row sm:items-center gap-8 transition-colors hover:border-clay/40"
+          className="group relative mt-2 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-6 transition-colors hover:border-mint/40"
         >
           <div
             aria-hidden
-            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-clay/25 blur-[90px] transition-opacity group-hover:opacity-80"
+            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-mint/25 blur-[90px] transition-opacity group-hover:opacity-80"
           />
 
           <div className="relative flex flex-1 flex-col gap-3">
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-clay/30 bg-clay/10 px-2.5 py-1 font-mono text-[10px] tracking-wider text-clay uppercase">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-mint/30 bg-mint/10 px-2.5 py-1 font-mono text-[10px] tracking-wider text-mint uppercase">
               <SparkleIcon />
               Novo · IA generativa
             </span>
-            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">
               Image to 3D
             </h2>
             <p className="text-white/55 max-w-md">
@@ -99,7 +97,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="relative flex items-center gap-2 shrink-0 rounded-full bg-clay px-6 py-3 font-medium text-[#1a0e06] w-fit transition-colors group-hover:bg-clay-soft">
+          <div className="relative flex items-center gap-2 shrink-0 rounded-full bg-mint px-6 py-3 font-medium text-[#0d2b1f] w-fit transition-colors group-hover:bg-mint-soft">
             Experimentar
             <span className="transition-transform group-hover:translate-x-0.5">
               →
@@ -122,7 +120,7 @@ export default function Home() {
                 href={tool.href}
                 className="group bg-background p-6 flex flex-col gap-4 transition-colors hover:bg-white/[0.04]"
               >
-                <div className="text-white/70 group-hover:text-clay transition-colors">
+                <div className="text-white/70 group-hover:text-mint transition-colors">
                   <Icon />
                 </div>
                 <div>
@@ -141,7 +139,7 @@ export default function Home() {
         Feito pela{" "}
         <a
           href="https://trivertido.com"
-          className="text-white/50 hover:text-clay transition-colors"
+          className="text-white/50 hover:text-mint transition-colors"
         >
           Trivertido 3D
         </a>{" "}

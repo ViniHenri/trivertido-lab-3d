@@ -14,7 +14,7 @@ export default function ToolShell({
       <div className="flex flex-col gap-3">
         <Link
           href="/"
-          className="w-fit font-mono text-xs tracking-wider text-white/40 hover:text-clay transition-colors uppercase"
+          className="w-fit font-mono text-xs tracking-wider text-white/40 hover:text-mint transition-colors uppercase"
         >
           ← Trivertido Lab
         </Link>

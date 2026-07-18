@@ -37,7 +37,7 @@ export default function RangeSlider({
         onChange={(e) => onChange(Number(e.target.value))}
         className="lab-range"
         style={{
-          background: `linear-gradient(to right, var(--color-clay) ${pct}%, rgba(255,255,255,0.12) ${pct}%)`,
+          background: `linear-gradient(to right, var(--color-mint) ${pct}%, rgba(255,255,255,0.12) ${pct}%)`,
         }}
       />
     </label>

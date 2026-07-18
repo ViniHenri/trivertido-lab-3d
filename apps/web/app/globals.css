@@ -2,23 +2,22 @@
 
 :root {
   /* Base quase-preta e morna — não o cinza-azulado padrão dos temas dark
-     genéricos. Remete a barro queimado / forno de cerâmica. */
+     genéricos. */
   --background: #0c0b09;
   --foreground: #f3efe9;
 
-  /* Terracota refinado — única cor de destaque do site, com motivo:
-     é a cor do barro e da resina queimada, não um laranja de paleta pronta. */
-  --color-clay: #c96a3b;
-  --color-clay-soft: #e08558;
-  --color-clay-dim: #7a3f24;
+  /* Verde menta — única cor de destaque do site, ferramenta interna. */
+  --color-mint: #43c78a;
+  --color-mint-soft: #6ed9a6;
+  --color-mint-dim: #1c3f30;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-clay: var(--color-clay);
-  --color-clay-soft: var(--color-clay-soft);
-  --color-clay-dim: var(--color-clay-dim);
+  --color-mint: var(--color-mint);
+  --color-mint-soft: var(--color-mint-soft);
+  --color-mint-dim: var(--color-mint-dim);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -29,7 +28,7 @@ body {
 }
 
 ::selection {
-  background: var(--color-clay);
+  background: var(--color-mint);
   color: #0c0b09;
 }
 
@@ -50,7 +49,7 @@ body {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--color-clay);
+  background: var(--color-mint);
   border: 2px solid #0c0b09;
   cursor: pointer;
   transition: transform 0.15s;
@@ -64,7 +63,7 @@ body {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: var(--color-clay);
+  background: var(--color-mint);
   border: 2px solid #0c0b09;
   cursor: pointer;
 }

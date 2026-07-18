@@ -184,7 +184,7 @@ export default function ImageTo3DPage() {
               <div className="relative z-10 flex flex-col items-center gap-3 text-center px-4">
                 {busy ? (
                   <>
-                    <div className="w-10 h-10 border-4 border-white/15 border-t-clay rounded-full animate-spin" />
+                    <div className="w-10 h-10 border-4 border-white/15 border-t-mint rounded-full animate-spin" />
                     <p className="text-white/80">
                       {stage.name === "uploading"
                         ? "Enviando imagem..."
@@ -204,7 +204,7 @@ export default function ImageTo3DPage() {
                   <>
                     <button
                       onClick={() => inputRef.current?.click()}
-                      className="px-5 py-3 rounded-lg bg-clay hover:bg-clay-soft font-medium"
+                      className="px-5 py-3 rounded-lg bg-mint hover:bg-mint-soft font-medium"
                     >
                       Escolher imagem
                     </button>
@@ -244,7 +244,7 @@ export default function ImageTo3DPage() {
                 disabled={busy}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
                   quality === "rapid"
-                    ? "bg-clay/15 border-clay text-clay"
+                    ? "bg-mint/15 border-mint text-mint"
                     : "bg-white/[0.06] border-white/15 text-white/55"
                 }`}
               >
@@ -255,7 +255,7 @@ export default function ImageTo3DPage() {
                 disabled={busy}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
                   quality === "pro"
-                    ? "bg-clay/15 border-clay text-clay"
+                    ? "bg-mint/15 border-mint text-mint"
                     : "bg-white/[0.06] border-white/15 text-white/55"
                 }`}
               >
@@ -278,7 +278,7 @@ export default function ImageTo3DPage() {
                   onClick={() =>
                     setOrderState((s) => ({ ...s, open: !s.open }))
                   }
-                  className="px-4 py-2 rounded-lg bg-clay hover:bg-clay-soft text-sm font-medium"
+                  className="px-4 py-2 rounded-lg bg-mint hover:bg-mint-soft text-sm font-medium"
                 >
                   Pedir impressão
                 </button>
@@ -306,7 +306,7 @@ export default function ImageTo3DPage() {
                     disabled={
                       orderState.sending || !orderState.name || !orderState.phone
                     }
-                    className="px-4 py-2 rounded-lg bg-clay hover:bg-clay-soft disabled:opacity-40 text-sm font-medium"
+                    className="px-4 py-2 rounded-lg bg-mint hover:bg-mint-soft disabled:opacity-40 text-sm font-medium"
                   >
                     {orderState.sending ? "Enviando..." : "Confirmar pedido"}
                   </button>
@@ -320,7 +320,7 @@ export default function ImageTo3DPage() {
                   setStage({ name: "idle" });
                   setPreview(null);
                 }}
-                className="text-sm text-clay hover:underline"
+                className="text-sm text-mint hover:underline"
               >
                 Gerar outro modelo
               </button>

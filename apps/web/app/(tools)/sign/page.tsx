@@ -141,7 +141,7 @@ export default function SignPage() {
                 onClick={() => set("recessed", false)}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
                   !params.recessed
-                    ? "bg-clay/15 border-clay text-clay"
+                    ? "bg-mint/15 border-mint text-mint"
                     : "bg-white/[0.06] border-white/15 text-white/55"
                 }`}
               >
@@ -151,7 +151,7 @@ export default function SignPage() {
                 onClick={() => set("recessed", true)}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm border ${
                   params.recessed
-                    ? "bg-clay/15 border-clay text-clay"
+                    ? "bg-mint/15 border-mint text-mint"
                     : "bg-white/[0.06] border-white/15 text-white/55"
                 }`}
               >
@@ -165,7 +165,7 @@ export default function SignPage() {
                 type="checkbox"
                 checked={params.holes}
                 onChange={(e) => set("holes", e.target.checked)}
-                className="accent-clay w-4 h-4"
+                className="accent-mint w-4 h-4"
               />
             </label>
             {params.holes && (

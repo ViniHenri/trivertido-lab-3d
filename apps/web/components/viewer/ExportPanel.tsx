@@ -166,7 +166,7 @@ export default function ExportPanel({
         <button
           onClick={() => setShowOrderForm((v) => !v)}
           disabled={!hasContent}
-          className="px-4 py-2 rounded-lg bg-clay hover:bg-clay-soft disabled:opacity-40 text-sm font-medium"
+          className="px-4 py-2 rounded-lg bg-mint hover:bg-mint-soft disabled:opacity-40 text-sm font-medium"
         >
           Pedir impressão
         </button>
@@ -201,7 +201,7 @@ export default function ExportPanel({
                     title={`${c.cor_nome} (${c.tipo})`}
                     className={`w-8 h-8 rounded-full border-2 transition-transform ${
                       colorId === c.id
-                        ? "border-clay/70 scale-110"
+                        ? "border-mint/70 scale-110"
                         : "border-white/20"
                     }`}
                     style={{ backgroundColor: c.cor }}
@@ -220,7 +220,7 @@ export default function ExportPanel({
           <button
             onClick={sendOrder}
             disabled={sending || !customerName || !customerPhone}
-            className="px-4 py-2 rounded-lg bg-clay hover:bg-clay-soft disabled:opacity-40 text-sm font-medium"
+            className="px-4 py-2 rounded-lg bg-mint hover:bg-mint-soft disabled:opacity-40 text-sm font-medium"
           >
             {sending ? "Enviando..." : "Confirmar pedido"}
           </button>

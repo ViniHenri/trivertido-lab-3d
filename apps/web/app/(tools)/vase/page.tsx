@@ -35,7 +35,7 @@ const SLIDERS: SliderConfig[] = [
 
 export default function VasePage() {
   const [params, setParams] = useState<VaseParams>(defaultVaseParams);
-  const [color, setColor] = useState("#c96a3b");
+  const [color, setColor] = useState("#43c78a");
 
   const geometry = useMemo(() => generateVaseGeometry(params), [params]);
 

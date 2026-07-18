@@ -25,7 +25,7 @@ export default function KeychainPage() {
   const [contour, setContour] = useState<THREE.Vector2[] | null>(null);
   const [params, setParams] = useState<KeychainParams>(defaultKeychainParams);
   const [error, setError] = useState<string | null>(null);
-  const [color, setColor] = useState("#c96a3b");
+  const [color, setColor] = useState("#43c78a");
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Revetoriza quando muda arquivo/threshold/invert (com debounce)
@@ -68,7 +68,7 @@ export default function KeychainPage() {
           ) : (
             <button
               onClick={() => inputRef.current?.click()}
-              className="w-full h-[420px] rounded-xl border-2 border-dashed border-white/15 bg-white/[0.03] hover:border-clay/50 transition-colors flex flex-col items-center justify-center gap-2"
+              className="w-full h-[420px] rounded-xl border-2 border-dashed border-white/15 bg-white/[0.03] hover:border-mint/50 transition-colors flex flex-col items-center justify-center gap-2"
             >
               <span className="text-lg text-white/80">
                 Clique pra escolher uma imagem
@@ -94,7 +94,7 @@ export default function KeychainPage() {
               <span>🖼️ {file.name}</span>
               <button
                 onClick={() => inputRef.current?.click()}
-                className="text-clay hover:underline"
+                className="text-mint hover:underline"
               >
                 trocar imagem
               </button>
@@ -118,7 +118,7 @@ export default function KeychainPage() {
                 type="checkbox"
                 checked={invert}
                 onChange={(e) => setInvert(e.target.checked)}
-                className="accent-clay w-4 h-4"
+                className="accent-mint w-4 h-4"
               />
             </label>
             <RangeSlider
@@ -149,7 +149,7 @@ export default function KeychainPage() {
                 onChange={(e) =>
                   setParams((p) => ({ ...p, ring: e.target.checked }))
                 }
-                className="accent-clay w-4 h-4"
+                className="accent-mint w-4 h-4"
               />
             </label>
           </div>

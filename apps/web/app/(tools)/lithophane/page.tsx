@@ -66,7 +66,7 @@ export default function LithophanePage() {
           ) : (
             <button
               onClick={() => inputRef.current?.click()}
-              className="w-full h-[420px] rounded-xl border-2 border-dashed border-white/15 bg-white/[0.03] hover:border-clay/50 transition-colors flex flex-col items-center justify-center gap-2"
+              className="w-full h-[420px] rounded-xl border-2 border-dashed border-white/15 bg-white/[0.03] hover:border-mint/50 transition-colors flex flex-col items-center justify-center gap-2"
             >
               <span className="text-lg text-white/80">
                 Clique pra escolher uma foto
@@ -89,7 +89,7 @@ export default function LithophanePage() {
               <span>📷 {fileName}</span>
               <button
                 onClick={() => inputRef.current?.click()}
-                className="text-clay hover:underline"
+                className="text-mint hover:underline"
               >
                 trocar foto
               </button>
@@ -137,7 +137,7 @@ export default function LithophanePage() {
                 onChange={(e) =>
                   setParams((p) => ({ ...p, frame: e.target.checked }))
                 }
-                className="accent-clay w-4 h-4"
+                className="accent-mint w-4 h-4"
               />
             </label>
             {params.frame && (

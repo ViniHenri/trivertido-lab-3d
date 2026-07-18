@@ -45,7 +45,7 @@ function GeometryMesh({
  */
 export default function Model3DViewer({
   geometry,
-  color = "#c96a3b",
+  color = "#43c78a",
   children,
   className,
 }: Model3DViewerProps) {

@@ -94,7 +94,7 @@ export default function LaserBoxPage() {
                 onChange={(e) =>
                   setParams((p) => ({ ...p, closedTop: e.target.checked }))
                 }
-                className="accent-clay w-4 h-4"
+                className="accent-mint w-4 h-4"
               />
             </label>
           </div>
