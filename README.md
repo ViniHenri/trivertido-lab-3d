@@ -85,6 +85,6 @@ create table lab_generations (
 ## Deploy (Vercel)
 
 1. Subir o repo pro GitHub
-2. Importar na Vercel — o `vercel.json` na raiz já aponta pra `apps/web`
+2. Importar na Vercel e definir **Root Directory = `apps/web`** (Settings → Build and Deployment)
 3. Configurar as variáveis de ambiente
 4. Push na `main` = deploy automático
