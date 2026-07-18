@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { FontLoader, type Font } from "three-stdlib";
 import ToolShell from "@/components/ui/ToolShell";
+import RangeSlider from "@/components/ui/RangeSlider";
 import ExportPanel from "@/components/viewer/ExportPanel";
 import {
   generateSignGeometry,
@@ -124,21 +125,15 @@ export default function SignPage() {
                 ["reliefDepth", "Profundidade do relevo (mm)", 0.6, 4, 0.2],
               ] as Array<[keyof SignParams, string, number, number, number]>
             ).map(([key, label, min, max, step]) => (
-              <label key={key} className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between text-white/80">
-                  {label}
-                  <span className="text-white/40">{params[key] as number}</span>
-                </span>
-                <input
-                  type="range"
-                  min={min}
-                  max={max}
-                  step={step}
-                  value={params[key] as number}
-                  onChange={(e) => set(key, Number(e.target.value) as never)}
-                  className="accent-clay"
-                />
-              </label>
+              <RangeSlider
+                key={key}
+                label={label}
+                min={min}
+                max={max}
+                step={step}
+                value={params[key] as number}
+                onChange={(value) => set(key, value as never)}
+              />
             ))}
 
             <div className="flex gap-2">
@@ -174,21 +169,14 @@ export default function SignPage() {
               />
             </label>
             {params.holes && (
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between text-white/80">
-                  Diâmetro dos furos (mm)
-                  <span className="text-white/40">{params.holeDiameter}</span>
-                </span>
-                <input
-                  type="range"
-                  min={2}
-                  max={8}
-                  step={0.5}
-                  value={params.holeDiameter}
-                  onChange={(e) => set("holeDiameter", Number(e.target.value))}
-                  className="accent-clay"
-                />
-              </label>
+              <RangeSlider
+                label="Diâmetro dos furos (mm)"
+                min={2}
+                max={8}
+                step={0.5}
+                value={params.holeDiameter}
+                onChange={(value) => set("holeDiameter", value)}
+              />
             )}
           </div>
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import ToolShell from "@/components/ui/ToolShell";
+import RangeSlider from "@/components/ui/RangeSlider";
 import ExportPanel, { type ExportFile } from "@/components/viewer/ExportPanel";
 import {
   generateLaserBoxPanels,
@@ -73,28 +74,17 @@ export default function LaserBoxPage() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 p-4 rounded-xl bg-white/[0.04] border border-white/10">
             {SLIDERS.map(({ key, label, min, max, step }) => (
-              <label key={key} className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between text-white/80">
-                  {label}
-                  <span className="text-white/40">
-                    {params[key] as number}
-                  </span>
-                </span>
-                <input
-                  type="range"
-                  min={min}
-                  max={max}
-                  step={step}
-                  value={params[key] as number}
-                  onChange={(e) =>
-                    setParams((p) => ({
-                      ...p,
-                      [key]: Number(e.target.value),
-                    }))
-                  }
-                  className="accent-clay"
-                />
-              </label>
+              <RangeSlider
+                key={key}
+                label={label}
+                min={min}
+                max={max}
+                step={step}
+                value={params[key] as number}
+                onChange={(value) =>
+                  setParams((p) => ({ ...p, [key]: value }))
+                }
+              />
             ))}
             <label className="flex items-center justify-between text-sm text-white/80">
               Caixa fechada (com tampa)

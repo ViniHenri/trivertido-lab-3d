@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import ToolShell from "@/components/ui/ToolShell";
+import RangeSlider from "@/components/ui/RangeSlider";
 import ExportPanel from "@/components/viewer/ExportPanel";
 import {
   generateLithophaneGeometry,
@@ -98,63 +99,36 @@ export default function LithophanePage() {
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 p-4 rounded-xl bg-white/[0.04] border border-white/10">
-            <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-white/80">
-                Largura (mm)
-                <span className="text-white/40">{params.widthMM}</span>
-              </span>
-              <input
-                type="range"
-                min={40}
-                max={200}
-                step={5}
-                value={params.widthMM}
-                onChange={(e) =>
-                  setParams((p) => ({ ...p, widthMM: Number(e.target.value) }))
-                }
-                className="accent-clay"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-white/80">
-                Espessura mínima (mm)
-                <span className="text-white/40">{params.minThickness}</span>
-              </span>
-              <input
-                type="range"
-                min={0.4}
-                max={2}
-                step={0.1}
-                value={params.minThickness}
-                onChange={(e) =>
-                  setParams((p) => ({
-                    ...p,
-                    minThickness: Number(e.target.value),
-                  }))
-                }
-                className="accent-clay"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-white/80">
-                Espessura máxima (mm)
-                <span className="text-white/40">{params.maxThickness}</span>
-              </span>
-              <input
-                type="range"
-                min={1.5}
-                max={6}
-                step={0.1}
-                value={params.maxThickness}
-                onChange={(e) =>
-                  setParams((p) => ({
-                    ...p,
-                    maxThickness: Number(e.target.value),
-                  }))
-                }
-                className="accent-clay"
-              />
-            </label>
+            <RangeSlider
+              label="Largura (mm)"
+              min={40}
+              max={200}
+              step={5}
+              value={params.widthMM}
+              onChange={(value) =>
+                setParams((p) => ({ ...p, widthMM: value }))
+              }
+            />
+            <RangeSlider
+              label="Espessura mínima (mm)"
+              min={0.4}
+              max={2}
+              step={0.1}
+              value={params.minThickness}
+              onChange={(value) =>
+                setParams((p) => ({ ...p, minThickness: value }))
+              }
+            />
+            <RangeSlider
+              label="Espessura máxima (mm)"
+              min={1.5}
+              max={6}
+              step={0.1}
+              value={params.maxThickness}
+              onChange={(value) =>
+                setParams((p) => ({ ...p, maxThickness: value }))
+              }
+            />
             <label className="flex items-center justify-between text-sm text-white/80">
               Moldura
               <input
@@ -167,26 +141,16 @@ export default function LithophanePage() {
               />
             </label>
             {params.frame && (
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between text-white/80">
-                  Largura da moldura (mm)
-                  <span className="text-white/40">{params.frameWidthMM}</span>
-                </span>
-                <input
-                  type="range"
-                  min={2}
-                  max={12}
-                  step={1}
-                  value={params.frameWidthMM}
-                  onChange={(e) =>
-                    setParams((p) => ({
-                      ...p,
-                      frameWidthMM: Number(e.target.value),
-                    }))
-                  }
-                  className="accent-clay"
-                />
-              </label>
+              <RangeSlider
+                label="Largura da moldura (mm)"
+                min={2}
+                max={12}
+                step={1}
+                value={params.frameWidthMM}
+                onChange={(value) =>
+                  setParams((p) => ({ ...p, frameWidthMM: value }))
+                }
+              />
             )}
           </div>
 

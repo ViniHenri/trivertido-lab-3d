@@ -6,7 +6,7 @@ import {
 } from "@/lib/supabase/client";
 import { sendPrintOrderToN8n } from "@/lib/n8n/webhook";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
-import type { LabGeneration } from "@/lib/supabase/types";
+import type { GenerationTool, LabGeneration } from "@/lib/supabase/types";
 
 export const runtime = "nodejs";
 
@@ -17,6 +17,16 @@ interface OrderBody {
   filamentColor?: string;
   notes?: string;
 }
+
+const TOOL_LABELS: Record<GenerationTool, string> = {
+  "image-to-3d": "Image to 3D",
+  lithophane: "Litofania",
+  vase: "Vaso",
+  keychain: "Chaveiro",
+  sign: "Placa",
+  "laser-box": "Caixa laser",
+  "desk-organizer": "Organizador",
+};
 
 export async function POST(req: Request) {
   if (!checkRateLimit(getClientIp(req))) {
@@ -60,18 +70,41 @@ export async function POST(req: Request) {
   if (generation.file_path) {
     const { data: signed } = await supabase.storage
       .from(LAB_MODELS_BUCKET)
-      .createSignedUrl(generation.file_path, 60 * 60 * 24 * 7);
+      .createSignedUrl(generation.file_path, 60 * 60 * 24 * 365);
     modelUrl = signed?.signedUrl ?? null;
   }
 
-  try {
-    await sendPrintOrderToN8n({ generation, modelUrl });
-  } catch (err) {
-    console.error("Falha no webhook n8n:", err);
-    return NextResponse.json(
-      { error: "Pedido registrado, mas a notificação falhou." },
-      { status: 502 }
-    );
+  // Uso interno: o pedido vira tarefa direto no Kanban (tabela `tasks`).
+  // Sem intermediário — não depende de n8n/WhatsApp pra aparecer no board.
+  const taskTitle = `${TOOL_LABELS[generation.tool]} — Lab 3D`;
+  const { error: taskError } = await supabase.from("tasks").insert({
+    title: taskTitle,
+    client: body.customerName,
+    status: "cotacao",
+    material: body.filamentColor ?? null,
+    link: modelUrl,
+  });
+
+  if (taskError) {
+    // Coluna `link` pode não existir ainda (precisa rodar a migração uma vez).
+    // Tenta de novo sem ela pra não travar a criação da tarefa.
+    console.error("Falha ao criar tarefa com link, tentando sem:", taskError);
+    const { error: fallbackError } = await supabase.from("tasks").insert({
+      title: taskTitle,
+      client: body.customerName,
+      status: "cotacao",
+      material: body.filamentColor ?? null,
+    });
+    if (fallbackError) console.error("Falha ao criar tarefa:", fallbackError);
+  }
+
+  // n8n/WhatsApp é opcional agora — só dispara se estiver configurado.
+  if (process.env.N8N_WEBHOOK_URL) {
+    try {
+      await sendPrintOrderToN8n({ generation, modelUrl });
+    } catch (err) {
+      console.error("Falha no webhook n8n (não bloqueante):", err);
+    }
   }
 
   return NextResponse.json({ ok: true, generationId: generation.id });

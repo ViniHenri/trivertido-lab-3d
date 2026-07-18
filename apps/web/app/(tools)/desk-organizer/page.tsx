@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import ToolShell from "@/components/ui/ToolShell";
+import RangeSlider from "@/components/ui/RangeSlider";
 import ExportPanel from "@/components/viewer/ExportPanel";
 import {
   generateDeskOrganizerGeometry,
@@ -58,26 +59,17 @@ export default function DeskOrganizerPage() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 p-4 rounded-xl bg-white/[0.04] border border-white/10">
             {SLIDERS.map(({ key, label, min, max, step }) => (
-              <label key={key} className="flex flex-col gap-1 text-sm">
-                <span className="flex justify-between text-white/80">
-                  {label}
-                  <span className="text-white/40">{params[key]}</span>
-                </span>
-                <input
-                  type="range"
-                  min={min}
-                  max={max}
-                  step={step}
-                  value={params[key]}
-                  onChange={(e) =>
-                    setParams((p) => ({
-                      ...p,
-                      [key]: Number(e.target.value),
-                    }))
-                  }
-                  className="accent-clay"
-                />
-              </label>
+              <RangeSlider
+                key={key}
+                label={label}
+                min={min}
+                max={max}
+                step={step}
+                value={params[key]}
+                onChange={(value) =>
+                  setParams((p) => ({ ...p, [key]: value }))
+                }
+              />
             ))}
             <p className="text-xs text-white/40">
               {params.cols * params.rows} compartimento

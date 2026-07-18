@@ -53,7 +53,7 @@ export default function Model3DViewer({
     <div
       className={
         className ??
-        "w-full h-[420px] rounded-2xl overflow-hidden bg-white/[0.03] border border-white/10"
+        "relative w-full h-[420px] rounded-2xl overflow-hidden bg-white/[0.03] border border-white/10"
       }
     >
       <Canvas shadows camera={{ position: [80, 60, 80], fov: 45 }}>
@@ -72,6 +72,9 @@ export default function Model3DViewer({
         </Suspense>
         <OrbitControls makeDefault enableDamping />
       </Canvas>
+      <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/40 backdrop-blur px-3 py-1 font-mono text-[10px] tracking-wide text-white/60 uppercase">
+        Arraste para girar · scroll pra zoom
+      </span>
     </div>
   );
 }

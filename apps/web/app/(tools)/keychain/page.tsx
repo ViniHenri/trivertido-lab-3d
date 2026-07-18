@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import * as THREE from "three";
 import ToolShell from "@/components/ui/ToolShell";
+import RangeSlider from "@/components/ui/RangeSlider";
 import ExportPanel from "@/components/viewer/ExportPanel";
 import { imageToBinaryGrid, traceOutline, simplify } from "@/lib/image/trace";
 import {
@@ -103,21 +104,14 @@ export default function KeychainPage() {
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 p-4 rounded-xl bg-white/[0.04] border border-white/10">
-            <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-white/80">
-                Detecção de borda (threshold)
-                <span className="text-white/40">{threshold.toFixed(2)}</span>
-              </span>
-              <input
-                type="range"
-                min={0.1}
-                max={0.9}
-                step={0.05}
-                value={threshold}
-                onChange={(e) => setThreshold(Number(e.target.value))}
-                className="accent-clay"
-              />
-            </label>
+            <RangeSlider
+              label="Detecção de borda (threshold)"
+              min={0.1}
+              max={0.9}
+              step={0.05}
+              value={threshold}
+              onChange={setThreshold}
+            />
             <label className="flex items-center justify-between text-sm text-white/80">
               Inverter figura/fundo
               <input
@@ -127,43 +121,26 @@ export default function KeychainPage() {
                 className="accent-clay w-4 h-4"
               />
             </label>
-            <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-white/80">
-                Largura (mm)
-                <span className="text-white/40">{params.widthMM}</span>
-              </span>
-              <input
-                type="range"
-                min={20}
-                max={80}
-                step={1}
-                value={params.widthMM}
-                onChange={(e) =>
-                  setParams((p) => ({ ...p, widthMM: Number(e.target.value) }))
-                }
-                className="accent-clay"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-sm">
-              <span className="flex justify-between text-white/80">
-                Espessura (mm)
-                <span className="text-white/40">{params.thickness}</span>
-              </span>
-              <input
-                type="range"
-                min={2}
-                max={8}
-                step={0.5}
-                value={params.thickness}
-                onChange={(e) =>
-                  setParams((p) => ({
-                    ...p,
-                    thickness: Number(e.target.value),
-                  }))
-                }
-                className="accent-clay"
-              />
-            </label>
+            <RangeSlider
+              label="Largura (mm)"
+              min={20}
+              max={80}
+              step={1}
+              value={params.widthMM}
+              onChange={(value) =>
+                setParams((p) => ({ ...p, widthMM: value }))
+              }
+            />
+            <RangeSlider
+              label="Espessura (mm)"
+              min={2}
+              max={8}
+              step={0.5}
+              value={params.thickness}
+              onChange={(value) =>
+                setParams((p) => ({ ...p, thickness: value }))
+              }
+            />
             <label className="flex items-center justify-between text-sm text-white/80">
               Argola pra corrente
               <input
